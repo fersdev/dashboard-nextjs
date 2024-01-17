@@ -36,7 +36,7 @@ export function PieChart() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/groupProducts")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/groupProducts`)
       .then((response) => response.json())
       .then((response: { ProductsGrouped: ProductsGrouped }) => {
         const data = response.ProductsGrouped;

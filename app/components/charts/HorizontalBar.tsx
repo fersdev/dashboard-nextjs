@@ -71,7 +71,7 @@ export function HorizontalBar() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/groupSalesPerson")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/groupSalesPerson`)
       .then((response) => response.json())
       .then((response: { SalesPersonGrouped: SalesPersonGrouped }) => {
         const data = response.SalesPersonGrouped;

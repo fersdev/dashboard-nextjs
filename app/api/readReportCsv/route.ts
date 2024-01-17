@@ -55,11 +55,6 @@ export async function GET() {
       0
     );
 
-    console.log(productsQuant);
-    console.log(grossAmount);
-    console.log(orderQuant);
-    console.log(netAmount);
-
     const dataset = {
       data,
       productsQuant: productsQuant,

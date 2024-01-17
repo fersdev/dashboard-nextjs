@@ -69,7 +69,7 @@ export function AreaChart() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/groupPeriod")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/groupPeriod`)
       .then((response) => response.json())
       .then((response: { PeriodGrouped: PeriodGrouped }) => {
         const data = response.PeriodGrouped;

@@ -5,7 +5,6 @@ import { VerticalBar } from "./components/charts/VerticalBar";
 import { PieChart } from "./components/charts/Pie";
 import { TableComponent } from "./components/tables/Table";
 import { HorizontalBar } from "./components/charts/HorizontalBar";
-import { DoughnutChart } from "./components/charts/Doughnut";
 import { StatsComponent } from "./components/stats/Stats";
 
 type Dataset = {
@@ -28,7 +27,8 @@ export default function Home() {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch("http://localhost:3000/api/readCsv")
+    // fetch(`${process.env..NEXT_PUBLIC_API_URL}/api/readCsv`)
+    fetch(`http://localhost:3000/api/readReportCsv`)
       .then((response) => response.json())
       .then((json) => setDataset(json.dataset))
       .finally(() => setIsLoading(false));
@@ -53,7 +53,7 @@ export default function Home() {
   return (
     <div className="container m-auto grid grid-cols-8 gap-4 grid-rows-16 p-5">
       <div className="col-span-full">
-        <h1>NAVBAR</h1>
+        <h1>DASHBOARD DE VENDAS</h1>
       </div>
       <div className="rounded bg-white sm:col-span-2 col-span-4 flex flex-col items-center justify-center p-4">
         <StatsComponent
@@ -67,13 +67,13 @@ export default function Home() {
       <div className="rounded bg-white sm:col-span-2 col-span-4 flex flex-col items-center justify-center p-4">
         <StatsComponent
           statNumber={formattedGrossAmount}
-          statText={"vendido em R$ (bruto)"}
+          statText={"total vendido"}
         />
       </div>
       <div className="rounded bg-white sm:col-span-2 col-span-4 flex flex-col items-center justify-center p-4">
         <StatsComponent
           statNumber={formattedNetAmount}
-          statText={"recebido em R$ (líquido)"}
+          statText={"total recebido"}
         />
       </div>
       <div className="rounded bg-white col-span-full sm:col-span-3">
@@ -82,9 +82,6 @@ export default function Home() {
       <div className="rounded bg-white col-span-full sm:col-span-5">
         <AreaChart />
       </div>
-      {/* <div className="rounded  bg-white col-span-full sm:col-span-2">
-        <DoughnutChart />
-      </div> */}
       <div className="rounded  bg-white  col-span-full sm:col-span-4">
         <VerticalBar />
       </div>
@@ -95,7 +92,7 @@ export default function Home() {
         <TableComponent dataset={dataset ? dataset.data : []} />
       </div>
       <div className="rounded col-span-full">
-        <h1>FOOTER</h1>
+        <h1></h1>
       </div>
     </div>
   );

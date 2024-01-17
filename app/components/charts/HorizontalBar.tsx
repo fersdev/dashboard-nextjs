@@ -71,7 +71,9 @@ export function HorizontalBar() {
   });
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/groupSalesPerson`)
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+    fetch(`${apiUrl}/api/groupSalesPerson`)
       .then((response) => response.json())
       .then((response: { SalesPersonGrouped: SalesPersonGrouped }) => {
         const data = response.SalesPersonGrouped;

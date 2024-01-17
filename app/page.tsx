@@ -26,8 +26,10 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
     setIsLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/readReportCsv`)
+    fetch(`${apiUrl}/api/readReportCsv`)
       .then((response) => response.json())
       .then((json) => setDataset(json.dataset))
       .finally(() => setIsLoading(false));

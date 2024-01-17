@@ -38,24 +38,6 @@ export const options = {
   },
 };
 
-// const labels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
-
-// export const data = {
-//   labels,
-//   datasets: [
-//     {
-//       label: "Objetivo",
-//       data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
-//       backgroundColor: "rgba(255, 99, 132, 0.5)",
-//     },
-//     {
-//       label: "Realizado",
-//       data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
-//       backgroundColor: "rgba(53, 162, 235, 0.5)",
-//     },
-//   ],
-// };
-
 export function VerticalBar() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -78,7 +60,9 @@ export function VerticalBar() {
   });
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/readSalesAgentsCsv`)
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+    fetch(`${apiUrl}/api/readSalesAgentsCsv`)
       .then((response) => response.json())
       .then((response: { data: SalesAgents[] }) => {
         const data = response.data;

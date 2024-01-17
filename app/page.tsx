@@ -84,9 +84,9 @@ export default function Home() {
       <div className="rounded  bg-white  col-span-full sm:col-span-4">
         <VerticalBar />
       </div>
-      {/* <div className="rounded bg-white col-span-full sm:col-span-4">
+      <div className="rounded bg-white col-span-full sm:col-span-4">
         <HorizontalBar />
-      </div> */}
+      </div>
       <div className="rounded  bg-white col-span-full">
         <TableComponent dataset={dataset ? dataset.data : []} />
       </div>

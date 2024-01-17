@@ -27,7 +27,6 @@ export default function Home() {
 
   useEffect(() => {
     setIsLoading(true);
-    // fetch(`${process.env..NEXT_PUBLIC_API_URL}/api/readCsv`)
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/readReportCsv`)
       .then((response) => response.json())
       .then((json) => setDataset(json.dataset))

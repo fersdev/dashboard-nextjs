@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import { AreaChart } from "./components/charts/Area";
 import { VerticalBar } from "./components/charts/VerticalBar";
 import { PieChart } from "./components/charts/Pie";
@@ -7,41 +8,91 @@ import { HorizontalBar } from "./components/charts/HorizontalBar";
 import { DoughnutChart } from "./components/charts/Doughnut";
 import { StatsComponent } from "./components/stats/Stats";
 
+type Dataset = {
+  data: {
+    Vendedor: string;
+    DataVenda: string;
+    Produto: string;
+    TotalVenda: string;
+    TotalRecebido: string;
+  }[];
+  productsQuant: string;
+  orderQuant: string;
+  grossAmount: string;
+  netAmount: string;
+};
+
 export default function Home() {
+  const [dataset, setDataset] = useState<Dataset | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetch("http://localhost:3000/api/readCsv")
+      .then((response) => response.json())
+      .then((json) => setDataset(json.dataset))
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  if (isLoading) {
+    return <div>Carregando...</div>;
+  }
+
+  let grossAmount = dataset?.grossAmount ? parseFloat(dataset.grossAmount) : 0;
+  let formattedGrossAmount = grossAmount.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+
+  let netAmount = dataset?.netAmount ? parseFloat(dataset.netAmount) : 0;
+  let formattedNetAmount = netAmount.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+
   return (
     <div className="container m-auto grid grid-cols-8 gap-4 grid-rows-16 p-5">
       <div className="col-span-full">
         <h1>NAVBAR</h1>
       </div>
       <div className="rounded bg-white sm:col-span-2 col-span-4 flex flex-col items-center justify-center p-4">
-        <StatsComponent statNumber={12} statText={"representantes"} />
+        <StatsComponent
+          statNumber={dataset?.productsQuant}
+          statText={"produtos"}
+        />
       </div>
       <div className="rounded bg-white sm:col-span-2 col-span-4 flex flex-col items-center justify-center p-4">
-        <StatsComponent statNumber={89} statText={"milhões faturados"} />
+        <StatsComponent statNumber={dataset?.orderQuant} statText={"pedidos"} />
       </div>
       <div className="rounded bg-white sm:col-span-2 col-span-4 flex flex-col items-center justify-center p-4">
-        <StatsComponent statNumber={53} statText={"cidades atendidas"} />
+        <StatsComponent
+          statNumber={formattedGrossAmount}
+          statText={"vendido em R$ (bruto)"}
+        />
       </div>
       <div className="rounded bg-white sm:col-span-2 col-span-4 flex flex-col items-center justify-center p-4">
-        <StatsComponent statNumber={353} statText={"pedidos"} />
+        <StatsComponent
+          statNumber={formattedNetAmount}
+          statText={"recebido em R$ (líquido)"}
+        />
       </div>
-      <div className="rounded bg-white col-span-full sm:col-span-2">
+      <div className="rounded bg-white col-span-full sm:col-span-3">
         <PieChart />
       </div>
-      <div className="rounded bg-white col-span-full sm:col-span-4">
-        <VerticalBar />
-      </div>
-      <div className="rounded  bg-white col-span-full sm:col-span-2">
-        <DoughnutChart />
-      </div>
-      <div className="rounded  bg-white  col-span-full sm:col-span-4">
+      <div className="rounded bg-white col-span-full sm:col-span-5">
         <AreaChart />
+      </div>
+      {/* <div className="rounded  bg-white col-span-full sm:col-span-2">
+        <DoughnutChart />
+      </div> */}
+      <div className="rounded  bg-white  col-span-full sm:col-span-4">
+        <VerticalBar />
       </div>
       <div className="rounded bg-white col-span-full sm:col-span-4">
         <HorizontalBar />
       </div>
       <div className="rounded  bg-white col-span-full">
-        <TableComponent />
+        <TableComponent dataset={dataset ? dataset.data : []} />
       </div>
       <div className="rounded col-span-full">
         <h1>FOOTER</h1>

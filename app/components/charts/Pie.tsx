@@ -1,35 +1,77 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-
-export const data = {
-  labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-  datasets: [
-    {
-      label: "# of Votes",
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        "rgba(255, 99, 132, 0.2)",
-        "rgba(54, 162, 235, 0.2)",
-        "rgba(255, 206, 86, 0.2)",
-        "rgba(75, 192, 192, 0.2)",
-        "rgba(153, 102, 255, 0.2)",
-        "rgba(255, 159, 64, 0.2)",
-      ],
-      borderColor: [
-        "rgba(255, 99, 132, 1)",
-        "rgba(54, 162, 235, 1)",
-        "rgba(255, 206, 86, 1)",
-        "rgba(75, 192, 192, 1)",
-        "rgba(153, 102, 255, 1)",
-        "rgba(255, 159, 64, 1)",
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
+interface ProductsGrouped {
+  labels: string[];
+  values: number[];
+  backgroundColor: string[];
+  borderColor: string[];
+}
 
 export function PieChart() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [data, setData] = useState<{
+    labels: string[];
+    datasets: {
+      data: number[];
+      label: string;
+      backgroundColor: string[];
+      borderColor: string[];
+      borderWidth: number;
+    }[];
+  }>({
+    labels: [],
+    datasets: [
+      {
+        label: "",
+        data: [],
+        backgroundColor: [],
+        borderColor: [],
+        borderWidth: 1,
+      },
+    ],
+  });
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/groupProducts")
+      .then((response) => response.json())
+      .then((response: { ProductsGrouped: ProductsGrouped }) => {
+        const data = response.ProductsGrouped;
+        const mappedData = {
+          labels: data.labels,
+          datasets: [
+            {
+              label: "Vendas em R$",
+              data: data.values,
+              backgroundColor: data.backgroundColor,
+              borderColor: data.borderColor,
+              borderWidth: 1,
+            },
+          ],
+        };
+        setData(mappedData);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <div>Carregando...</div>;
+  }
+
+  if (error) {
+    return <div>Erro: {error}</div>;
+  }
+
+  if (!data || !data.labels || !data.datasets) {
+    return <div>Dados indisponíveis</div>;
+  }
+
   return <Pie data={data} />;
 }

@@ -9,6 +9,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
+import { useEffect, useState } from "react";
 
 ChartJS.register(
   CategoryScale,
@@ -18,6 +19,11 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
+interface SalesPersonGrouped {
+  labels: string[];
+  values: number[];
+}
 
 export const options = {
   indexAxis: "y" as const,
@@ -29,35 +35,78 @@ export const options = {
   responsive: true,
   plugins: {
     legend: {
-      position: "right" as const,
+      display: false,
+      // position: "right" as const,
     },
     title: {
       display: true,
-      text: "Chart.js Horizontal Bar Chart",
+      text: "Vendas por Vendedor",
     },
   },
 };
 
-const labels = ["January", "February", "March", "April", "May", "June", "July"];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: "Dataset 1",
-      data: labels.map(() => faker.number.int({ min: -1000, max: 1000 })),
-      borderColor: "rgb(255, 99, 132)",
-      backgroundColor: "rgba(255, 99, 132, 0.5)",
-    },
-    {
-      label: "Dataset 2",
-      data: labels.map(() => faker.number.int({ min: -1000, max: 1000 })),
-      borderColor: "rgb(53, 162, 235)",
-      backgroundColor: "rgba(53, 162, 235, 0.5)",
-    },
-  ],
-};
-
 export function HorizontalBar() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [data, setData] = useState<{
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      borderColor: string;
+      backgroundColor: string;
+      borderWidth: number;
+    }[];
+  }>({
+    labels: [],
+    datasets: [
+      {
+        label: "",
+        data: [],
+        backgroundColor: "rgb(255, 99, 132)",
+        borderColor: "rgba(255, 99, 132, 0.5)",
+        borderWidth: 1,
+      },
+    ],
+  });
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/groupSalesPerson")
+      .then((response) => response.json())
+      .then((response: { SalesPersonGrouped: SalesPersonGrouped }) => {
+        const data = response.SalesPersonGrouped;
+        const mappedData = {
+          labels: data.labels,
+          datasets: [
+            {
+              label: "Total ( em R$)",
+              data: data.values,
+              backgroundColor: "rgb(255, 99, 132)",
+              borderColor: "rgba(255, 99, 132, 0.5)",
+              borderWidth: 1,
+            },
+          ],
+        };
+        setData(mappedData);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <div>Carregando...</div>;
+  }
+
+  if (error) {
+    return <div>Erro: {error}</div>;
+  }
+
+  if (!data || !data.labels || !data.datasets) {
+    return <div>Dados indisponíveis</div>;
+  }
+
   return <Bar options={options} data={data} />;
 }

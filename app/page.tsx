@@ -28,7 +28,7 @@ export default function Home() {
   useEffect(() => {
     setIsLoading(true);
     // fetch(`${process.env..NEXT_PUBLIC_API_URL}/api/readCsv`)
-    fetch(`http://localhost:3000/api/readReportCsv`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/readReportCsv`)
       .then((response) => response.json())
       .then((json) => setDataset(json.dataset))
       .finally(() => setIsLoading(false));
@@ -85,9 +85,9 @@ export default function Home() {
       <div className="rounded  bg-white  col-span-full sm:col-span-4">
         <VerticalBar />
       </div>
-      <div className="rounded bg-white col-span-full sm:col-span-4">
+      {/* <div className="rounded bg-white col-span-full sm:col-span-4">
         <HorizontalBar />
-      </div>
+      </div> */}
       <div className="rounded  bg-white col-span-full">
         <TableComponent dataset={dataset ? dataset.data : []} />
       </div>
